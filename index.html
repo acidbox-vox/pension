@@ -2,362 +2,260 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>คำนวณบำเหน็จบำนาญข้าราชการ</title>
 
-<style>
-body{
-font-family:Sarabun,sans-serif;
-background:#f4f6f9;
-margin:0;
-padding:20px;
-}
+<link rel="stylesheet" href="css/style.css">
 
-.container{
-max-width:1000px;
-margin:auto;
-background:#fff;
-padding:20px;
-border-radius:15px;
-box-shadow:0 2px 10px rgba(0,0,0,.1);
-}
-
-h1{
-text-align:center;
-color:#003366;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
-gap:10px;
-}
-
-input,select{
-width:100%;
-padding:8px;
-box-sizing:border-box;
-}
-
-.section{
-margin-top:20px;
-padding:15px;
-border:1px solid #ddd;
-border-radius:10px;
-}
-
-.result{
-background:#eef7ff;
-padding:15px;
-border-radius:10px;
-}
-
-.salaryRow{
-display:grid;
-grid-template-columns:2fr 2fr 1fr;
-gap:10px;
-margin-bottom:5px;
-}
-
-.value{
-font-weight:bold;
-color:#003366;
-}
-
-label{
-font-weight:bold;
-}
-
-@media(max-width:600px){
-.salaryRow{
-grid-template-columns:1fr;
-}
-}
-</style>
 </head>
-
 <body>
 
 <div class="container">
 
 <h1>คำนวณบำเหน็จบำนาญข้าราชการ</h1>
 
-<div class="section">
+<!-- ประเภทสมาชิก -->
+
+<div class="card">
+
+<h2>ข้อมูลพื้นฐาน</h2>
 
 <label>ประเภทสมาชิก</label>
 
-<select id="memberType" onchange="calculate()">
-<option value="gpf">สมาชิก กบข.</option>
-<option value="normal">ไม่เป็นสมาชิก กบข.</option>
+<select id="memberType">
+
+<option value="gpf">
+สมาชิก กบข.
+</option>
+
+<option value="normal">
+ไม่เป็นสมาชิก กบข.
+</option>
+
 </select>
 
-</div>
+<label>วันบรรจุราชการ</label>
 
-<div class="section">
+<input
+type="date"
+id="startDate">
 
-<h3>อายุราชการ</h3>
+<label>วันออกจากราชการ</label>
 
-<div class="grid">
-
-<input type="number" id="serviceYear" placeholder="ปี" oninput="calculate()">
-<input type="number" id="serviceMonth" placeholder="เดือน" oninput="calculate()">
-<input type="number" id="serviceDay" placeholder="วัน" oninput="calculate()">
-
-</div>
-
-<h3>วันทวีคูณ</h3>
-
-<div class="grid">
-
-<input type="number" id="bonusYear" placeholder="ปี" oninput="calculate()">
-<input type="number" id="bonusMonth" placeholder="เดือน" oninput="calculate()">
-<input type="number" id="bonusDay" placeholder="วัน" oninput="calculate()">
+<input
+type="date"
+id="endDate">
 
 </div>
 
+<!-- อายุราชการ -->
+
+<div class="card">
+
+<h2>อายุราชการ</h2>
+
+<div id="serviceResult">
+0 ปี 0 เดือน 0 วัน
 </div>
 
-<div class="section">
+</div>
+
+<!-- ทวีคูณ -->
+
+<div class="card">
+
+<h2>วันทวีคูณ</h2>
+
+<div class="grid3">
+
+<input
+type="number"
+id="bonusYear"
+placeholder="ปี">
+
+<input
+type="number"
+id="bonusMonth"
+placeholder="เดือน">
+
+<input
+type="number"
+id="bonusDay"
+placeholder="วัน">
+
+</div>
+
+</div>
+
+<!-- รวมอายุราชการ -->
+
+<div class="card">
+
+<h2>รวมอายุราชการ</h2>
+
+<div id="totalServiceResult">
+0 ปี 0 เดือน 0 วัน
+</div>
+
+<h3>เวลาราชการ</h3>
+
+<div id="serviceDecimal">
+0.00 ปี
+</div>
+
+</div>
+
+<!-- เงินเดือน -->
+
+<div class="card">
+
+<h2>เงินเดือน</h2>
 
 <label>เงินเดือนสุดท้าย</label>
-<input type="number" id="lastSalary" oninput="calculate()">
+
+<input
+type="number"
+id="lastSalary"
+placeholder="เงินเดือนสุดท้าย">
 
 </div>
 
-<div class="section">
+<!-- เงินเดือนเฉลี่ย -->
 
-<h3>เงินเดือนเฉลี่ย 60 เดือน</h3>
+<div class="card">
+
+<h2>เงินเดือนเฉลี่ย 60 เดือน</h2>
 
 <label>
-<input type="radio" name="avgType" value="manual" checked onchange="toggleMode()">
-กรอกเอง
+
+<input
+type="radio"
+name="avgMode"
+value="manual"
+checked>
+
+กรอกค่าเฉลี่ยเอง
+
 </label>
 
 <label>
-<input type="radio" name="avgType" value="history" onchange="toggleMode()">
+
+<input
+type="radio"
+name="avgMode"
+value="history">
+
 คำนวณจาก 10 งวด
+
 </label>
 
-<div id="manualBox">
+<!-- กรอกเอง -->
 
-<input type="number" id="avgSalary" placeholder="เงินเดือนเฉลี่ย 60 เดือน" oninput="calculate()">
+<div id="manualSection">
 
-</div>
-
-<div id="historyBox" style="display:none">
-
-<div id="historyRows"></div>
-
-</div>
+<input
+type="number"
+id="avgSalary"
+placeholder="เงินเดือนเฉลี่ย 60 เดือน">
 
 </div>
 
-<div class="section result">
+<!-- 10 งวด -->
+
+<div id="historySection">
+
+<button
+type="button"
+id="generateBtn">
+
+สร้าง 10 งวดอัตโนมัติ
+
+</button>
+
+<div id="salaryPeriods">
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ค่าเฉลี่ย -->
+
+<div class="card">
+
+<h2>ค่าเฉลี่ยที่ใช้คำนวณ</h2>
+
+<div id="avgSalaryDisplay">
+0.00 บาท
+</div>
+
+</div>
+
+<!-- ผลลัพธ์ -->
+
+<div class="card result-card">
 
 <h2>ผลการคำนวณ</h2>
 
-<p>รวมอายุราชการ :
-<span class="value" id="totalServiceText"></span>
-</p>
+<div class="result-row">
+<span>บำเหน็จ</span>
+<span id="gratuityResult">
+0.00
+</span>
+</div>
 
-<p>เวลาราชการ :
-<span class="value" id="serviceDecimal"></span>
-</p>
+<div class="result-row">
+<span>บำนาญ</span>
+<span id="pensionResult">
+0.00
+</span>
+</div>
 
-<p>เงินเดือนเฉลี่ย 60 เดือน :
-<span class="value" id="avgResult"></span>
-</p>
+<div class="result-row">
+<span>บำเหน็จดำรงชีพ</span>
+<span id="livingGrantResult">
+0.00
+</span>
+</div>
 
-<hr>
+</div>
 
-<p>บำเหน็จ :
-<span class="value" id="gratuity"></span>
-</p>
+<!-- ปุ่ม -->
 
-<p>บำนาญ :
-<span class="value" id="pension"></span>
-</p>
+<div class="card">
 
-<p>บำเหน็จดำรงชีพ :
-<span class="value" id="living"></span>
-</p>
+<div class="button-group">
+
+<button id="printBtn">
+
+พิมพ์รายงาน
+
+</button>
+
+<button id="pdfBtn">
+
+Export PDF
+
+</button>
+
+<button id="clearBtn">
+
+ล้างข้อมูล
+
+</button>
 
 </div>
 
 </div>
 
-<script>
-
-const historyRows=document.getElementById("historyRows");
-
-for(let i=1;i<=10;i++){
-
-historyRows.innerHTML+=`
-<div class="salaryRow">
-<input type="text" value="งวด ${i}" readonly>
-<input type="number" class="salaryInput" placeholder="เงินเดือน">
-<input type="number" class="monthInput" value="6">
 </div>
-`;
 
-}
-
-document.addEventListener("input",calculate);
-
-function toggleMode(){
-
-const mode=document.querySelector('input[name="avgType"]:checked').value;
-
-document.getElementById("manualBox").style.display=
-mode==="manual"?"block":"none";
-
-document.getElementById("historyBox").style.display=
-mode==="history"?"block":"none";
-
-calculate();
-
-}
-
-function normalize(y,m,d){
-
-if(d>=30){
-m+=Math.floor(d/30);
-d=d%30;
-}
-
-if(m>=12){
-y+=Math.floor(m/12);
-m=m%12;
-}
-
-return {y,m,d};
-
-}
-
-function calculate(){
-
-let sy=parseInt(serviceYear.value)||0;
-let sm=parseInt(serviceMonth.value)||0;
-let sd=parseInt(serviceDay.value)||0;
-
-let by=parseInt(bonusYear.value)||0;
-let bm=parseInt(bonusMonth.value)||0;
-let bd=parseInt(bonusDay.value)||0;
-
-let total=normalize(
-sy+by,
-sm+bm,
-sd+bd
-);
-
-document.getElementById("totalServiceText").innerText=
-`${total.y} ปี ${total.m} เดือน ${total.d} วัน`;
-
-let serviceDecimal=
-Math.floor(
-(
-total.y+
-(total.m/12)+
-(total.d/360)
-)*100
-)/100;
-
-document.getElementById("serviceDecimal").innerText=
-serviceDecimal.toFixed(2);
-
-let avgSalary=0;
-
-const mode=document.querySelector('input[name="avgType"]:checked').value;
-
-if(mode==="manual"){
-
-avgSalary=parseFloat(
-document.getElementById("avgSalary").value
-)||0;
-
-}else{
-
-let totalMoney=0;
-let totalMonth=0;
-
-document.querySelectorAll(".salaryInput").forEach((s,i)=>{
-
-let sal=parseFloat(s.value)||0;
-
-let mon=parseFloat(
-document.querySelectorAll(".monthInput")[i].value
-)||0;
-
-totalMoney+=sal*mon;
-totalMonth+=mon;
-
-});
-
-avgSalary=
-totalMonth>0
-?totalMoney/totalMonth
-:0;
-
-}
-
-document.getElementById("avgResult").innerText=
-avgSalary.toLocaleString('th-TH',{
-minimumFractionDigits:2,
-maximumFractionDigits:2
-});
-
-let lastSalary=
-parseFloat(
-document.getElementById("lastSalary").value
-)||0;
-
-let gratuity=
-lastSalary*serviceDecimal;
-
-let pension=0;
-
-const type=
-document.getElementById("memberType").value;
-
-if(type==="gpf"){
-
-pension=
-(avgSalary*serviceDecimal)/50;
-
-const max=
-avgSalary*0.70;
-
-if(pension>max)
-pension=max;
-
-}else{
-
-pension=
-(lastSalary*serviceDecimal)/50;
-
-}
-
-let living=
-Math.min(
-pension*15,
-200000
-);
-
-document.getElementById("gratuity").innerText=
-gratuity.toLocaleString('th-TH',{minimumFractionDigits:2});
-
-document.getElementById("pension").innerText=
-pension.toLocaleString('th-TH',{minimumFractionDigits:2});
-
-document.getElementById("living").innerText=
-living.toLocaleString('th-TH',{minimumFractionDigits:2});
-
-}
-
-calculate();
-
-</script>
+<script src="js/dateCalculator.js"></script>
+<script src="js/salaryCalculator.js"></script>
+<script src="js/pensionCalculator.js"></script>
+<script src="js/app.js"></script>
 
 </body>
 </html>
