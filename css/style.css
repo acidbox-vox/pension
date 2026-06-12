@@ -186,3 +186,9 @@ flex-direction:column;
 }
 
 }
+
+input[type=text]{
+
+    font-size:16px;
+
+}

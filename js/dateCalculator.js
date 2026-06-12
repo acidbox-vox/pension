@@ -1,4 +1,31 @@
 // ========================================
+// รับวันที่ พ.ศ.
+// รูปแบบ 01/04/2564
+// ========================================
+
+function parseThaiDate(dateStr){
+
+    if(!dateStr) return null;
+
+    const parts = dateStr.split("/");
+
+    if(parts.length !== 3){
+        return null;
+    }
+
+    const day = parseInt(parts[0],10);
+    const month = parseInt(parts[1],10);
+    const yearBE = parseInt(parts[2],10);
+
+    return new Date(
+        yearBE - 543,
+        month - 1,
+        day
+    );
+
+}
+
+// ========================================
 // dateCalculator.js
 // คำนวณอายุราชการ
 // วันบรรจุนับ
@@ -133,12 +160,12 @@ function calculateServiceDecimal(
 function calculateServiceAge(
     startDateString,
     endDateString
-) {
+){
 
-    if (
+    if(
         !startDateString ||
         !endDateString
-    ) {
+    ){
 
         return {
             years:0,
@@ -149,14 +176,26 @@ function calculateServiceAge(
     }
 
     const start =
-        new Date(startDateString);
+        parseThaiDate(
+            startDateString
+        );
 
     const end =
-        new Date(endDateString);
+        parseThaiDate(
+            endDateString
+        );
 
-    // ------------------
+    if(!start || !end){
+
+        return {
+            years:0,
+            months:0,
+            days:0
+        };
+
+    }
+
     // วันออกไม่นับ
-    // ------------------
 
     end.setDate(
         end.getDate() - 1
@@ -174,23 +213,25 @@ function calculateServiceAge(
         end.getDate() -
         start.getDate();
 
-    // ------------------
-    // ยืมวัน
-    // ------------------
+    // แบบเดียวกับ Excel DATEDIF
 
-    if (days < 0) {
+    if(days < 0){
 
         months--;
 
-        days += 30;
+        const prevMonthDays =
+
+            new Date(
+                end.getFullYear(),
+                end.getMonth(),
+                0
+            ).getDate();
+
+        days += prevMonthDays;
 
     }
 
-    // ------------------
-    // ยืมเดือน
-    // ------------------
-
-    if (months < 0) {
+    if(months < 0){
 
         years--;
 
@@ -207,7 +248,6 @@ function calculateServiceAge(
     };
 
 }
-
 // --------------------------
 // แปลง object เป็นข้อความ
 // --------------------------
