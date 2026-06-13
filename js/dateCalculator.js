@@ -7,6 +7,28 @@ function parseThaiDate(dateStr){
 
     if(!dateStr) return null;
 
+    // รูปแบบจาก <input type="date"> คือ yyyy-mm-dd (ค.ศ.)
+    if(dateStr.includes("-")){
+
+        const parts = dateStr.split("-");
+
+        if(parts.length !== 3){
+            return null;
+        }
+
+        const year = parseInt(parts[0],10);
+        const month = parseInt(parts[1],10);
+        const day = parseInt(parts[2],10);
+
+        return new Date(
+            year,
+            month - 1,
+            day
+        );
+
+    }
+
+    // รูปแบบ dd/mm/yyyy (พ.ศ.)
     const parts = dateStr.split("/");
 
     if(parts.length !== 3){
