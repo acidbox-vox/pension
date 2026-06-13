@@ -7,7 +7,9 @@ function parseThaiDate(dateStr){
 
     if(!dateStr) return null;
 
-    // รูปแบบจาก <input type="date"> คือ yyyy-mm-dd (ค.ศ.)
+    let day, month, year;
+
+    // รูปแบบจาก <input type="date"> คือ yyyy-mm-dd
     if(dateStr.includes("-")){
 
         const parts = dateStr.split("-");
@@ -16,31 +18,44 @@ function parseThaiDate(dateStr){
             return null;
         }
 
-        const year = parseInt(parts[0],10);
-        const month = parseInt(parts[1],10);
-        const day = parseInt(parts[2],10);
-
-        return new Date(
-            year,
-            month - 1,
-            day
-        );
+        year  = parseInt(parts[0],10);
+        month = parseInt(parts[1],10);
+        day   = parseInt(parts[2],10);
 
     }
+    // รูปแบบ dd/mm/yyyy
+    else if(dateStr.includes("/")){
 
-    // รูปแบบ dd/mm/yyyy (พ.ศ.)
-    const parts = dateStr.split("/");
+        const parts = dateStr.split("/");
 
-    if(parts.length !== 3){
+        if(parts.length !== 3){
+            return null;
+        }
+
+        day   = parseInt(parts[0],10);
+        month = parseInt(parts[1],10);
+        year  = parseInt(parts[2],10);
+
+    }
+    else{
         return null;
     }
 
-    const day = parseInt(parts[0],10);
-    const month = parseInt(parts[1],10);
-    const yearBE = parseInt(parts[2],10);
+    if(
+        isNaN(day) ||
+        isNaN(month) ||
+        isNaN(year)
+    ){
+        return null;
+    }
+
+    // ถ้าเป็นปี พ.ศ. (>= 2400) ให้แปลงเป็น ค.ศ.
+    if(year >= 2400){
+        year -= 543;
+    }
 
     return new Date(
-        yearBE - 543,
+        year,
         month - 1,
         day
     );
